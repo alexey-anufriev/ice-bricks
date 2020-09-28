@@ -8,12 +8,17 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class IoUtilsTest {
+class IoUtilsTest {
 
     @Test
-    public void shouldWrapCheckedIoException() {
+    void shouldWrapCheckedIoException() {
         Assertions.assertThatExceptionOfType(UncheckedIOException.class).isThrownBy(
                 () -> IoUtils.runSafe(() -> Files.delete(Paths.get("/some/dummy/path/to/delete"))));
+    }
+
+    @Test
+    void shouldReturnResultWithoutExceptionCheck() {
+        Assertions.assertThat(IoUtils.runSafe(() -> Paths.get("."))).isNotNull();
     }
 
 }
