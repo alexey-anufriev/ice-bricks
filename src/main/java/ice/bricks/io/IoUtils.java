@@ -14,7 +14,7 @@ import java.io.UncheckedIOException;
 public final class IoUtils {
 
     /**
-     * Performs a method call that throws checked {@link IOException}
+     * Performs a method call that may throw checked {@link IOException}
      * replacing it with runtime {@link UncheckedIOException}.
      * Useful to write IO-related code without an obligation to catch / handle checked {@link IOException}.
      *
@@ -43,7 +43,7 @@ public final class IoUtils {
     }
 
     /**
-     * Performs a method call that returns a result and throws checked {@link IOException}
+     * Performs a method call that returns a result and may throw checked {@link IOException}
      * replacing it with runtime {@link UncheckedIOException}.
      * Useful to write IO-related code without an obligation to catch / handle checked {@link IOException}.
      *
