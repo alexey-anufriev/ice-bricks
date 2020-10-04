@@ -1,4 +1,4 @@
-package ice.bricks.io.tests;
+package ice.bricks.io.tests.fixtures;
 
 import lombok.Getter;
 

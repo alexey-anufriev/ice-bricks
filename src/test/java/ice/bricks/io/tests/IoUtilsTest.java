@@ -1,7 +1,7 @@
 package ice.bricks.io.tests;
 
 import ice.bricks.io.IoUtils;
-import org.assertj.core.api.Assertions;
+import ice.bricks.io.tests.fixtures.TestCloseableResource;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -9,35 +9,38 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 class IoUtilsTest {
 
     @Test
     void shouldWrapCheckedIoException() {
-        Assertions.assertThatExceptionOfType(UncheckedIOException.class).isThrownBy(
+        assertThatExceptionOfType(UncheckedIOException.class).isThrownBy(
                 () -> IoUtils.runSafe(() -> Files.delete(Paths.get("/some/dummy/path/to/delete"))));
     }
 
     @Test
     void shouldReturnResultWithoutExceptionCheck() {
-        Assertions.assertThat(IoUtils.runSafe(() -> Paths.get("."))).isNotNull();
+        assertThat(IoUtils.runSafe(() -> Paths.get("."))).isNotNull();
     }
 
     @Test
-    void shouldCloseResourceOnSuccess() {
+    void shouldCloseResourceIfSuccess() {
         TestCloseableResource testCloseableResource = new TestCloseableResource();
         IoUtils.tryAndClose(() -> testCloseableResource, testResource -> {});
-        Assertions.assertThat(testCloseableResource.isClosed()).isTrue();
+        assertThat(testCloseableResource.isClosed()).isTrue();
     }
 
     @Test
-    void shouldCloseResourceOnFailure() {
+    void shouldCloseResourceIfFailure() {
         TestCloseableResource testCloseableResource = new TestCloseableResource();
-        Assertions.assertThatExceptionOfType(UncheckedIOException.class).isThrownBy(() ->
+        assertThatExceptionOfType(UncheckedIOException.class).isThrownBy(() ->
                 IoUtils.tryAndClose(() -> testCloseableResource, testResource -> {
                     throw new IOException("test resource processing error");
                 })
         );
-        Assertions.assertThat(testCloseableResource.isClosed()).isTrue();
+        assertThat(testCloseableResource.isClosed()).isTrue();
     }
 
 }

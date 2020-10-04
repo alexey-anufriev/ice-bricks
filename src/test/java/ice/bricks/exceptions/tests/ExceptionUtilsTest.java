@@ -1,14 +1,15 @@
 package ice.bricks.exceptions.tests;
 
 import ice.bricks.exceptions.ExceptionUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ExceptionUtilsTest {
 
     @Test
     void shouldWrapCheckedException() {
-        Assertions.assertThatExceptionOfType(IllegalStateException.class).isThrownBy(
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(
                 () -> ExceptionUtils.runSafe(() -> Class.forName("MyUnknownClass")));
     }
 
