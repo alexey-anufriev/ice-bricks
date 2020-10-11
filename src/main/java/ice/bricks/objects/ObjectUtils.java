@@ -18,7 +18,7 @@ public final class ObjectUtils {
      * Instead of:
      * <pre>
      *     Integer value = someValue;
-     *     if (value > 5) {
+     *     if (value &gt; 5) {
      *         value = 15;
      *     }
      * </pre>
