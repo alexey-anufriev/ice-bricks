@@ -27,7 +27,7 @@ public final class IoUtils {
      *     }
      * </pre>
      *
-     * the call may look like this:
+     * the code may look like this:
      * <pre>
      *     IoUtils.runSafe(() -&gt; Files.delete(Paths.get("/some/dummy/path/to/delete")));
      * </pre>
@@ -56,7 +56,7 @@ public final class IoUtils {
      *     }
      * </pre>
      *
-     * the call may look like this:
+     * the code may look like this:
      * <pre>
      *     IoUtils.runSafe(() -&gt; Paths.get("/some/dummy/path/to/file"));
      * </pre>

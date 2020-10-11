@@ -22,7 +22,7 @@ public final class ExceptionUtils {
      *     }
      * </pre>
      *
-     * the call may look like this:
+     * the code may look like this:
      * <pre>
      *     ExceptionUtils.runSafe(() -&gt; MethodUtils.invokeMethod(object, methodName));
      * </pre>
@@ -53,7 +53,7 @@ public final class ExceptionUtils {
      *     }
      * </pre>
      *
-     * the call may look like this:
+     * the code may look like this:
      * <pre>
      *     boolean check = ExceptionUtils.runSafe(() -&gt; checkFuture.get());
      * </pre>
