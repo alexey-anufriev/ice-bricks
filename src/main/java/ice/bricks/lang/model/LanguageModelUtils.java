@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
@@ -24,6 +25,16 @@ public final class LanguageModelUtils {
     public static boolean isBooleanType(Types typeUtils, Type type) {
         String typeName = getBoxedTypeName(typeUtils, type);
         return Boolean.class.getCanonicalName().equals(typeName);
+    }
+
+    /**
+     * Checks if the type is void.
+     *
+     * @param type type to be checked
+     * @return true if a given type is boolean, otherwise false
+     */
+    public static boolean isVoidType(Type type) {
+        return type.getKind() == TypeKind.VOID;
     }
 
     /**
