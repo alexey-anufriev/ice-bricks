@@ -70,4 +70,47 @@ public final class ExceptionUtils {
         }
     }
 
+    /**
+     * Combines exceptions in a chain. This allows to build a structure of nested exceptions within a root one.
+     *
+     * Chaining of exceptions can be done in the following way
+     * <pre>
+     *     Exception root = new Exception("Message");
+     *     // ...
+     *     root = chainExceptions(root, new Exception("Other message"));
+     *     // ...
+     *     root = chainExceptions(root, new Exception("Yet another message"));
+     * </pre>
+     *
+     * Final stack trace will contain all the exceptions
+     * <pre>
+     *     Exception java.lang.Exception: Yet another message
+     *       at ...
+     *         Suppressed: java.lang.Exception: Other message
+     *           at ...
+     *             Suppressed: java.lang.Exception: Message
+     *               at ...
+     * </pre>
+     *
+     * @param suppressed original exception
+     * @param suppressor newly occurred exception that suppresses the original one
+     * @return suppressor exception with chained suppressed exception
+     */
+    public static Throwable chainExceptions(Throwable suppressed, Throwable suppressor) {
+        if (suppressed == null && suppressor == null) {
+            return null;
+        }
+
+        if (suppressed == null) {
+            return suppressor;
+        }
+
+        if (suppressor == null) {
+            return suppressed;
+        }
+
+        suppressor.addSuppressed(suppressed);
+        return suppressor;
+    }
+
 }
