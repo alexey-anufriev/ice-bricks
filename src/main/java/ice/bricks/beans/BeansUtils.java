@@ -73,9 +73,10 @@ public final class BeansUtils {
         boolean isVoid = LanguageModelUtils.isVoidType(method.getReturnType());
         boolean isRegularSetter = methodName.equals("set" + fieldName);
         boolean hasSingleParameter = method.getParameters().size() == 1;
-        boolean hasSameParameterTypeAsField = fieldElement.asType().equals(method.getParameters().get(0).asType());
+        boolean hasSameParameterTypeAsField = hasSingleParameter
+                && fieldElement.asType().equals(method.getParameters().get(0).asType());
 
-        if (isVoid && isRegularSetter && hasSingleParameter && hasSameParameterTypeAsField) {
+        if (isVoid && isRegularSetter && hasSameParameterTypeAsField) {
             return true;
         }
 
