@@ -22,4 +22,13 @@ class ClassUtilsTest {
         assertThat(classPackage).isNull();
     }
 
+    @Test
+    void shouldLoadClassByName() {
+        Class<?> clazz = ClassUtils.getClassByName("java.lang.Exception");
+        assertThat(clazz).isEqualTo(java.lang.Exception.class);
+
+        clazz = ClassUtils.getClassByName("java.lang.NonExistingClass");
+        assertThat(clazz).isNull();
+    }
+
 }

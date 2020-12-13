@@ -40,4 +40,20 @@ public final class ClassUtils {
         return canonicalClassName;
     }
 
+    /**
+     * Returns class name its string name, or {@code null} if class cannot be loaded.
+     *
+     * @param className canonical class name
+     * @return class looked up by name
+     */
+    @Nullable
+    public static Class<?> getClassByName(String className) {
+        try {
+            return Class.forName(className);
+        }
+        catch (Exception ignored) {
+            return null;
+        }
+    }
+
 }
