@@ -35,4 +35,10 @@ class ExceptionUtilsTest {
                 .hasStackTraceContaining("Original exception");
     }
 
+    @Test
+    void shouldReturnDefaultValueIfException() {
+        assertThat(ExceptionUtils.defaultIfException(() -> 2 * 2, 5)).isEqualTo(4);
+        assertThat(ExceptionUtils.defaultIfException(() -> 2 / 0, 5)).isEqualTo(5);
+    }
+
 }
