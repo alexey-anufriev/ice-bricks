@@ -15,7 +15,7 @@ public final class ClassUtils {
      * or {@code null} if class has no package defined.
      *
      * @param canonicalClassName canonical class name
-     * @return class package
+     * @return class package if defined or {@code null}
      */
     @Nullable
     public static String getClassPackage(String canonicalClassName) {
@@ -44,7 +44,7 @@ public final class ClassUtils {
      * Returns class name its string name, or {@code null} if class cannot be loaded.
      *
      * @param className canonical class name
-     * @return class looked up by name
+     * @return class looked up by name or {@code null}
      */
     @Nullable
     public static Class<?> getClassByName(String className) {
