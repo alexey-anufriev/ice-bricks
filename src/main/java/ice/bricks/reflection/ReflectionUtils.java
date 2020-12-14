@@ -5,6 +5,14 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
 /**
  * Contains reflection-related utility methods.
  */
@@ -50,6 +58,29 @@ public final class ReflectionUtils {
             String errorMessage = String.format("Unable to generate new instance of '%s'", type.getSimpleName());
             throw new InstanceCreationException(errorMessage, e);
         }
+    }
+
+    /**
+     * Generates a collection instance of a given type using predefined implementations if an interface was supplied
+     * or a default constructor.
+     *
+     * @param collectionType desired type of a newly created collection
+     * @return newly created collection
+     */
+    public static Collection<Object> generateNewCollectionInstance(Class<?> collectionType) {
+        if (collectionType.isInterface()) {
+            if (List.class.isAssignableFrom(collectionType)) {
+                return new ArrayList<>();
+            }
+            else if (Set.class.isAssignableFrom(collectionType)) {
+                return new HashSet<>();
+            }
+            else if (Queue.class.isAssignableFrom(collectionType)) {
+                return new LinkedList<>();
+            }
+        }
+
+        return generateNewInstance(collectionType);
     }
 
     /**

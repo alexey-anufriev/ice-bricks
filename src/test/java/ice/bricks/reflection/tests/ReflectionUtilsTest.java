@@ -7,6 +7,17 @@ import ice.bricks.reflection.ReflectionUtils;
 import ice.bricks.reflection.tests.fixtures.TestPojo;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -101,6 +112,20 @@ class ReflectionUtilsTest {
                 .isThrownBy(() -> ReflectionUtils.<Long>invokeMethod(
                         testObject, "setLongValue", new Class<?>[] {long.class}, new Object[]{123456789L}))
                 .withMessage("Unable to call TestPojo#setLongValue");
+    }
+
+    @Test
+    void shouldGenerateNewCollectionInstance() {
+        assertThat(ReflectionUtils.generateNewCollectionInstance(List.class)).isInstanceOf(ArrayList.class);
+        assertThat(ReflectionUtils.generateNewCollectionInstance(Set.class)).isInstanceOf(HashSet.class);
+        assertThat(ReflectionUtils.generateNewCollectionInstance(Queue.class)).isInstanceOf(LinkedList.class);
+        assertThat(ReflectionUtils.generateNewCollectionInstance(Vector.class)).isInstanceOf(Vector.class);
+        assertThat(ReflectionUtils.generateNewCollectionInstance(TreeSet.class)).isInstanceOf(TreeSet.class);
+        assertThat(ReflectionUtils.generateNewCollectionInstance(PriorityQueue.class)).isInstanceOf(PriorityQueue.class);
+
+        assertThatExceptionOfType(InstanceCreationException.class)
+                .isThrownBy(() -> ReflectionUtils.generateNewCollectionInstance(Collection.class))
+                .withMessage("Unable to generate new instance of 'Collection'");
     }
 
 }
