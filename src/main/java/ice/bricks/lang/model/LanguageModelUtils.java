@@ -1,7 +1,6 @@
 package ice.bricks.lang.model;
 
 import com.sun.tools.javac.code.Type;
-import ice.bricks.meta.ClassUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,7 +64,7 @@ public final class LanguageModelUtils {
      * Returns detailed type definition on the input {@link Element}
      * or {@code null} if the input not a defined type.
      *
-     * @param typeElement instance of {@link Types}
+     * @param typeElement instance of {@link Element}
      * @return instance of ({@link TypeDefinition}) with the information parsed from input or {@code null}
      */
     @Nullable
@@ -77,37 +76,36 @@ public final class LanguageModelUtils {
 
             if (rawType.contains("<")) {
                 String rawTypeName = rawType.substring(0, rawType.indexOf("<"));
-                Class<?> type = ClassUtils.getClassByName(rawTypeName);
 
                 Type.ClassType classType = (Type.ClassType) typeMirror;
-                List<Class<?>> genericTypes = classType.getTypeArguments().stream()
-                        .map(typeArgument -> ClassUtils.getClassByName(typeArgument.toString()))
+                List<String> genericTypes = classType.getTypeArguments().stream()
+                        .map(Type::toString)
                         .collect(Collectors.toList());
 
-                return new TypeDefinition(type, genericTypes);
+                return new TypeDefinition(rawTypeName, genericTypes);
             }
 
-            return new TypeDefinition(ClassUtils.getClassByName(rawType), Collections.emptyList());
+            return new TypeDefinition(rawType, Collections.emptyList());
         }
 
         return null;
     }
 
     /**
-     * Represents type definition containing the type itself with specified generics.
+     * Represents type definition containing the type name with names of specified generics.
      */
     @Getter
     public static class TypeDefinition {
 
-        private final Class<?> type;
-        private final List<Class<?>> generics;
+        private final String typeName;
+        private final List<String> generics;
 
-        private TypeDefinition(Class<?> type, List<Class<?>> generics) {
-            if (type == null) {
+        private TypeDefinition(String typeName, List<String> generics) {
+            if (typeName == null) {
                 throw new IllegalArgumentException("Type is missing");
             }
 
-            this.type = type;
+            this.typeName = typeName;
             this.generics = generics;
         }
 

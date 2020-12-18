@@ -48,7 +48,7 @@ class LanguageModelUtilsTest {
 
         if (testData.expectedResult) {
             assertThat(definition).isNotNull();
-            assertThat(definition.getType()).isEqualTo(testData.expectedType);
+            assertThat(definition.getTypeName()).isEqualTo(testData.expectedType);
             assertThat(definition.getGenerics()).containsExactlyElementsOf(testData.expectedGenerics);
         }
         else {
@@ -72,7 +72,7 @@ class LanguageModelUtilsTest {
                                 .rawType("java.lang.Integer")
                                 .rawTypeArguments(Collections.emptyList())
                                 .expectedResult(true)
-                                .expectedType(Integer.class)
+                                .expectedType(Integer.class.getCanonicalName())
                                 .expectedGenerics(Collections.emptyList())
                                 .build()),
 
@@ -82,7 +82,7 @@ class LanguageModelUtilsTest {
                                 .rawType("java.util.List")
                                 .rawTypeArguments(Collections.emptyList())
                                 .expectedResult(true)
-                                .expectedType(List.class)
+                                .expectedType(List.class.getCanonicalName())
                                 .expectedGenerics(Collections.emptyList())
                                 .build()),
 
@@ -92,8 +92,8 @@ class LanguageModelUtilsTest {
                                 .rawType("java.util.List<String>")
                                 .rawTypeArguments(Collections.singletonList("java.lang.String"))
                                 .expectedResult(true)
-                                .expectedType(List.class)
-                                .expectedGenerics(Collections.singletonList(String.class))
+                                .expectedType(List.class.getCanonicalName())
+                                .expectedGenerics(Collections.singletonList(String.class.getCanonicalName()))
                                 .build()),
 
                 Arguments.of(
@@ -102,8 +102,9 @@ class LanguageModelUtilsTest {
                                 .rawType("java.util.Map<String, Integer>")
                                 .rawTypeArguments(Arrays.asList("java.lang.String", "java.lang.Integer"))
                                 .expectedResult(true)
-                                .expectedType(Map.class)
-                                .expectedGenerics(Arrays.asList(String.class, Integer.class))
+                                .expectedType(Map.class.getCanonicalName())
+                                .expectedGenerics(Arrays.asList(
+                                        String.class.getCanonicalName(), Integer.class.getCanonicalName()))
                                 .build())
         );
     }
@@ -115,8 +116,8 @@ class LanguageModelUtilsTest {
         private final List<String> rawTypeArguments;
 
         private final boolean expectedResult;
-        private final Class<?> expectedType;
-        private final List<Class<?>> expectedGenerics;
+        private final String expectedType;
+        private final List<String> expectedGenerics;
     }
 
 }
