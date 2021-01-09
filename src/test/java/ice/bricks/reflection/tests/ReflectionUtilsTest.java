@@ -8,6 +8,7 @@ import ice.bricks.reflection.tests.fixtures.TestPojo;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -91,6 +92,12 @@ class ReflectionUtilsTest {
     }
 
     @Test
+    void shouldCallNonAccessibleGetterMethod() {
+        List<String> testList = Arrays.asList("A", "B", "C");
+        assertThat(ReflectionUtils.<Integer>invokeMethod(testList, "size")).isEqualTo(3);
+    }
+
+    @Test
     void shouldFailIfGetterMethodIsNotAccessible() {
         TestPojo testObject = new TestPojo(42);
         assertThatExceptionOfType(MethodCallException.class)
@@ -103,6 +110,13 @@ class ReflectionUtilsTest {
         TestPojo testObject = new TestPojo(41);
         ReflectionUtils.<String>invokeMethod(testObject, "setIntValue", new Class<?>[] {int.class}, new Object[]{42});
         assertThat(testObject.getIntValue()).isEqualTo(42);
+    }
+
+    @Test
+    void shouldCallNonAccessibleSetterMethod() {
+        List<String> testList = Arrays.asList("A", "B", "C");
+        assertThat(ReflectionUtils.<Boolean>invokeMethod(
+                testList, "contains", new Class<?>[] {String.class}, new Object[]{"B"})).isTrue();
     }
 
     @Test

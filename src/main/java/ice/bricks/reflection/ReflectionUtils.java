@@ -132,7 +132,7 @@ public final class ReflectionUtils {
     public static <T> T invokeMethod(Object object, String methodName) {
         try {
             //noinspection unchecked
-            return (T) MethodUtils.invokeMethod(object, methodName);
+            return (T) MethodUtils.invokeMethod(object, true, methodName);
         }
         catch (Exception e) {
             String errorMessage = String.format("Unable to call %s#%s", object.getClass().getSimpleName(), methodName);
@@ -153,7 +153,7 @@ public final class ReflectionUtils {
     public static <T> T invokeMethod(Object object, String methodName, Class<?>[] parameterTypes, Object[] arguments) {
         try {
             //noinspection unchecked
-            return (T) MethodUtils.invokeMethod(object, methodName, arguments, parameterTypes);
+            return (T) MethodUtils.invokeMethod(object, true, methodName, arguments, parameterTypes);
         }
         catch (Exception e) {
             String errorMessage = String.format("Unable to call %s#%s", object.getClass().getSimpleName(), methodName);
