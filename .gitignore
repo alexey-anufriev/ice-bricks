@@ -2,3 +2,6 @@
 *.iml
 
 target
+
+settings.xml
+pom.xml.versionsBackup
