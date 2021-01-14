@@ -1,4 +1,4 @@
-name: Master Branch Validation
+name: Validate Master Branch
 
 on:
   push:
