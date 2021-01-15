@@ -6,7 +6,7 @@
 
     <groupId>com.github.alexey-anufriev</groupId>
     <artifactId>ice-bricks</artifactId>
-    <version>0.0.15</version>
+    <version>0.0.16-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>ICE Bricks</name>
