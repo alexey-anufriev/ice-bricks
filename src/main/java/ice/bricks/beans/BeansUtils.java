@@ -60,21 +60,23 @@ public final class BeansUtils {
         Symbol.MethodSymbol method = (Symbol.MethodSymbol) methodElement;
         String methodName = method.getSimpleName().toString();
 
+        // getter case
         boolean isBoolean = LanguageModelUtils.isBooleanType(types, method.getReturnType());
         boolean isBooleanGetter = methodName.equals("is" + fieldName);
         boolean isRegularGetter = methodName.equals("get" + fieldName);
         boolean hasNoParameters = method.getParameters().isEmpty();
-        boolean hasSameReturnTypeAsField = fieldElement.asType().equals(method.getReturnType());
+        boolean hasSameReturnTypeAsField = fieldElement.asType().toString().equals(method.getReturnType().toString());
 
         if (((isBoolean && isBooleanGetter) || isRegularGetter) && hasNoParameters && hasSameReturnTypeAsField) {
             return true;
         }
 
+        // setter case
         boolean isVoid = LanguageModelUtils.isVoidType(method.getReturnType());
         boolean isRegularSetter = methodName.equals("set" + fieldName);
         boolean hasSingleParameter = method.getParameters().size() == 1;
         boolean hasSameParameterTypeAsField = hasSingleParameter
-                && fieldElement.asType().equals(method.getParameters().get(0).asType());
+                && fieldElement.asType().toString().equals(method.getParameters().get(0).asType().toString());
 
         if (isVoid && isRegularSetter && hasSameParameterTypeAsField) {
             return true;
