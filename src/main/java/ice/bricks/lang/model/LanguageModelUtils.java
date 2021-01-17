@@ -44,6 +44,21 @@ public final class LanguageModelUtils {
     }
 
     /**
+     * Returns boxed type of the primitive type.
+     *
+     * @param typeUtils instance of {@link Types}
+     * @param type type to be boxed
+     * @return boxed type
+     */
+    public static TypeMirror getBoxedType(Types typeUtils, TypeMirror type) {
+        if (type.getKind().isPrimitive()) {
+            return typeUtils.boxedClass((PrimitiveType) type).asType();
+        }
+
+        return type;
+    }
+
+    /**
      * Returns canonical name of the type. If the type is primitive it is boxed first.
      *
      * @param typeUtils instance of {@link Types}
@@ -51,41 +66,66 @@ public final class LanguageModelUtils {
      * @return name of the boxed type
      */
     public static String getBoxedTypeName(Types typeUtils, TypeMirror type) {
-        String typeName = type.toString();
-
-        if (type.getKind().isPrimitive()) {
-            typeName = typeUtils.boxedClass((PrimitiveType) type).toString();
-        }
-
-        return typeName;
+        return getBoxedType(typeUtils, type).toString();
     }
 
     /**
      * Returns detailed type definition on the input {@link Element}
      * or {@code null} if the input not a defined type.
      *
+     * @param typeUtils instance of {@link Types}
      * @param typeElement instance of {@link Element}
      * @return instance of ({@link TypeDefinition}) with the information parsed from input or {@code null}
      */
     @Nullable
-    public static TypeDefinition getTypeDefinition(Element typeElement) {
+    public static TypeDefinition getTypeDefinition(Types typeUtils, Element typeElement) {
         TypeMirror typeMirror = typeElement.asType();
 
-        if (typeMirror.getKind() == TypeKind.DECLARED) {
+        boolean declaredType = typeMirror.getKind() == TypeKind.DECLARED;
+
+        boolean isArray = typeMirror.getKind() == TypeKind.ARRAY;
+        if (isArray) {
+            // check if array of primitives supplied
+            Type arrayComponentType = ((Type.ArrayType) typeMirror).getComponentType();
+            if (arrayComponentType.isPrimitive()) {
+                typeMirror = getBoxedType(typeUtils, arrayComponentType);
+            }
+        }
+
+        boolean isPrimitive = typeMirror.getKind().isPrimitive();
+        if (isPrimitive) {
+            typeMirror = getBoxedType(typeUtils, typeMirror);
+        }
+
+        if (declaredType || isPrimitive || isArray) {
             String rawType = typeMirror.toString();
+
+            if (isArray) {
+                rawType = rawType.replace("[]", "");
+            }
 
             if (rawType.contains("<")) {
                 String rawTypeName = rawType.substring(0, rawType.indexOf("<"));
 
-                Type.ClassType classType = (Type.ClassType) typeMirror;
-                List<String> genericTypes = classType.getTypeArguments().stream()
+                com.sun.tools.javac.util.List<Type> genericParams = null;
+
+                if (declaredType) {
+                    Type.ClassType classType = (Type.ClassType) typeMirror;
+                    genericParams = classType.getTypeArguments();
+                }
+                else if (isArray) {
+                    Type.ArrayType arrayType = (Type.ArrayType) typeMirror;
+                    genericParams = arrayType.allparams();
+                }
+
+                List<String> genericTypes = genericParams.stream()
                         .map(Type::toString)
                         .collect(Collectors.toList());
 
-                return new TypeDefinition(rawTypeName, genericTypes);
+                return new TypeDefinition(rawTypeName, genericTypes, isArray);
             }
 
-            return new TypeDefinition(rawType, Collections.emptyList());
+            return new TypeDefinition(rawType, Collections.emptyList(), isArray);
         }
 
         return null;
@@ -99,14 +139,16 @@ public final class LanguageModelUtils {
 
         private final String typeName;
         private final List<String> generics;
+        private final boolean isArray;
 
-        private TypeDefinition(String typeName, List<String> generics) {
+        private TypeDefinition(String typeName, List<String> generics, boolean isArray) {
             if (typeName == null) {
                 throw new IllegalArgumentException("Type is missing");
             }
 
             this.typeName = typeName;
             this.generics = generics;
+            this.isArray = isArray;
         }
 
     }
