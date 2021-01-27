@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -81,6 +83,9 @@ public final class LanguageModelUtils {
     public static TypeDefinition getTypeDefinition(Types typeUtils, Element typeElement) {
         TypeMirror typeMirror = typeElement.asType();
 
+        boolean isAbstract = typeElement.getModifiers().contains(Modifier.ABSTRACT);
+        boolean isInterface = typeElement.getKind() == ElementKind.INTERFACE;
+
         boolean declaredType = typeMirror.getKind() == TypeKind.DECLARED;
 
         boolean isArray = typeMirror.getKind() == TypeKind.ARRAY;
@@ -122,10 +127,10 @@ public final class LanguageModelUtils {
                         .map(Type::toString)
                         .collect(Collectors.toList());
 
-                return new TypeDefinition(rawTypeName, genericTypes, isArray);
+                return new TypeDefinition(rawTypeName, genericTypes, isArray, isAbstract, isInterface);
             }
 
-            return new TypeDefinition(rawType, Collections.emptyList(), isArray);
+            return new TypeDefinition(rawType, Collections.emptyList(), isArray, isAbstract, isInterface);
         }
 
         return null;
@@ -140,8 +145,12 @@ public final class LanguageModelUtils {
         private final String typeName;
         private final List<String> generics;
         private final boolean isArray;
+        private final boolean isAbstract;
+        private final boolean isInterface;
 
-        private TypeDefinition(String typeName, List<String> generics, boolean isArray) {
+        private TypeDefinition(String typeName, List<String> generics, boolean isArray, boolean isAbstract,
+                               boolean isInterface) {
+
             if (typeName == null) {
                 throw new IllegalArgumentException("Type is missing");
             }
@@ -149,6 +158,8 @@ public final class LanguageModelUtils {
             this.typeName = typeName;
             this.generics = generics;
             this.isArray = isArray;
+            this.isAbstract = isAbstract;
+            this.isInterface = isInterface;
         }
 
     }
