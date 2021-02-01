@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.PrimitiveType;
@@ -72,30 +71,28 @@ public final class LanguageModelUtils {
     }
 
     /**
-     * Returns detailed type definition on the input {@link Element}
+     * Returns detailed type definition on the input {@link TypeMirror}
      * or {@code null} if the input not a defined type.
      *
      * @param typeUtils instance of {@link Types}
-     * @param typeElement instance of {@link Element}
-     * @return instance of ({@link TypeDefinition}) with the information parsed from input or {@code null}
+     * @param typeMirror instance of {@link TypeMirror} to be analyzed
+     * @return instance of ({@link TypeDetails}) with the information parsed from input or {@code null}
      */
     @Nullable
-    public static TypeDefinition getTypeDefinition(Types typeUtils, Element typeElement) {
-        TypeMirror typeMirror = typeElement.asType();
+    public static TypeDetails getTypeDetails(Types typeUtils, TypeMirror typeMirror) {
+        boolean isArray = typeMirror.getKind() == TypeKind.ARRAY;
 
-        boolean isAbstract = typeElement.getModifiers().contains(Modifier.ABSTRACT);
-        boolean isInterface = typeElement.getKind() == ElementKind.INTERFACE;
+        if (isArray) {
+            typeMirror = ((Type.ArrayType) typeMirror).getComponentType();
+        }
 
         boolean declaredType = typeMirror.getKind() == TypeKind.DECLARED;
 
-        boolean isArray = typeMirror.getKind() == TypeKind.ARRAY;
-        if (isArray) {
-            // check if array of primitives supplied
-            Type arrayComponentType = ((Type.ArrayType) typeMirror).getComponentType();
-            if (arrayComponentType.isPrimitive()) {
-                typeMirror = getBoxedType(typeUtils, arrayComponentType);
-            }
-        }
+        boolean isAbstract = declaredType && ((Type.ClassType) typeMirror).asElement()
+                .getModifiers().contains(Modifier.ABSTRACT);
+
+        boolean isInterface = declaredType && ((Type.ClassType) typeMirror).asElement()
+                .getKind() == ElementKind.INTERFACE;
 
         boolean isPrimitive = typeMirror.getKind().isPrimitive();
         if (isPrimitive) {
@@ -110,56 +107,42 @@ public final class LanguageModelUtils {
             }
 
             if (rawType.contains("<")) {
-                String rawTypeName = rawType.substring(0, rawType.indexOf("<"));
+                rawType = rawType.substring(0, rawType.indexOf("<"));
 
-                com.sun.tools.javac.util.List<Type> genericParams = null;
-
-                if (declaredType) {
-                    Type.ClassType classType = (Type.ClassType) typeMirror;
-                    genericParams = classType.getTypeArguments();
-                }
-                else if (isArray) {
-                    Type.ArrayType arrayType = (Type.ArrayType) typeMirror;
-                    genericParams = arrayType.allparams();
-                }
-
-                List<String> genericTypes = genericParams.stream()
-                        .map(Type::toString)
+                List<TypeDetails> genericTypes = ((Type) typeMirror).allparams().stream()
+                        .map(type -> getTypeDetails(typeUtils, type))
                         .collect(Collectors.toList());
 
-                return new TypeDefinition(rawTypeName, genericTypes, isArray, isAbstract, isInterface);
+                return new TypeDetails(rawType, isArray, isAbstract, isInterface, genericTypes);
             }
 
-            return new TypeDefinition(rawType, Collections.emptyList(), isArray, isAbstract, isInterface);
+            return new TypeDetails(rawType, isArray, isAbstract, isInterface, Collections.emptyList());
         }
 
         return null;
     }
 
-    /**
-     * Represents type definition containing the type name with names of specified generics.
-     */
     @Getter
-    public static class TypeDefinition {
+    public static class TypeDetails {
 
         private final String typeName;
-        private final List<String> generics;
         private final boolean isArray;
         private final boolean isAbstract;
         private final boolean isInterface;
+        private final List<TypeDetails> generics;
 
-        private TypeDefinition(String typeName, List<String> generics, boolean isArray, boolean isAbstract,
-                               boolean isInterface) {
+        private TypeDetails(String typeName, boolean isArray, boolean isAbstract, boolean isInterface,
+                            List<TypeDetails> generics) {
 
             if (typeName == null) {
                 throw new IllegalArgumentException("Type is missing");
             }
 
             this.typeName = typeName;
-            this.generics = generics;
             this.isArray = isArray;
             this.isAbstract = isAbstract;
             this.isInterface = isInterface;
+            this.generics = generics;
         }
 
     }
