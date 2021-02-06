@@ -86,6 +86,18 @@ public final class LanguageModelUtils {
             typeMirror = ((Type.ArrayType) typeMirror).getComponentType();
         }
 
+        if (typeMirror.getKind() == TypeKind.WILDCARD) {
+            Type.WildcardType wildcardType = (Type.WildcardType) typeMirror;
+
+            // ? super T => Object
+            if (wildcardType.isSuperBound()) {
+                return new TypeDetails(Object.class.getCanonicalName(), isArray, false, false, Collections.emptyList());
+            }
+
+            // ? extends T => T
+            typeMirror = wildcardType.getExtendsBound();
+        }
+
         boolean declaredType = typeMirror.getKind() == TypeKind.DECLARED;
 
         boolean isAbstract = declaredType && ((Type.ClassType) typeMirror).asElement()
