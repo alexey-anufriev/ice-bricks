@@ -51,6 +51,10 @@ public final class StreamUtils {
             return elements.collect(Collectors.toCollection(PriorityQueue::new));
         }
 
+        if (Iterable.class.isAssignableFrom(collectionType)) {
+            return elements.collect(Collectors.toList());
+        }
+
         throw new IllegalArgumentException(collectionType.getCanonicalName() + " is not supported");
     }
 

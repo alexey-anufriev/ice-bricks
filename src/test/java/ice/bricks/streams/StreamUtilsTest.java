@@ -31,6 +31,11 @@ class StreamUtilsTest {
                 .hasOnlyElementsOfType(String.class)
                 .containsExactly(strings);
 
+        assertThat(StreamUtils.collectStream(Stream.of(strings), Iterable.class))
+                .isInstanceOf(List.class)
+                .hasOnlyElementsOfType(String.class)
+                .containsExactly(strings);
+
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> StreamUtils.collectStream(Stream.of(strings), Stream.class));
     }
