@@ -78,6 +78,9 @@ public final class ReflectionUtils {
             else if (Queue.class.isAssignableFrom(collectionType)) {
                 return new LinkedList<>();
             }
+            else if (Iterable.class.isAssignableFrom(collectionType)) {
+                return new ArrayList<>();
+            }
         }
 
         return generateNewInstance(collectionType);

@@ -136,10 +136,8 @@ class ReflectionUtilsTest {
         assertThat(ReflectionUtils.generateNewCollectionInstance(Vector.class)).isInstanceOf(Vector.class);
         assertThat(ReflectionUtils.generateNewCollectionInstance(TreeSet.class)).isInstanceOf(TreeSet.class);
         assertThat(ReflectionUtils.generateNewCollectionInstance(PriorityQueue.class)).isInstanceOf(PriorityQueue.class);
-
-        assertThatExceptionOfType(InstanceCreationException.class)
-                .isThrownBy(() -> ReflectionUtils.generateNewCollectionInstance(Collection.class))
-                .withMessage("Unable to generate new instance of 'Collection'");
+        assertThat(ReflectionUtils.generateNewCollectionInstance(Collection.class)).isInstanceOf(ArrayList.class);
+        assertThat(ReflectionUtils.generateNewCollectionInstance(Iterable.class)).isInstanceOf(ArrayList.class);
     }
 
 }
