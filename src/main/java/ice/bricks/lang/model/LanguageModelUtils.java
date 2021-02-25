@@ -91,7 +91,8 @@ public final class LanguageModelUtils {
 
             // ? super T => Object
             if (wildcardType.isSuperBound()) {
-                return new TypeDetails(Object.class.getCanonicalName(), isArray, false, false, Collections.emptyList());
+                String typeName = Object.class.getCanonicalName();
+                return new TypeDetails(typeName, typeName, false, isArray, false, false, Collections.emptyList());
             }
 
             // ? extends T => T
@@ -107,12 +108,12 @@ public final class LanguageModelUtils {
                 .getKind() == ElementKind.INTERFACE;
 
         boolean isPrimitive = typeMirror.getKind().isPrimitive();
-        if (isPrimitive) {
-            typeMirror = getBoxedType(typeUtils, typeMirror);
-        }
 
         if (declaredType || isPrimitive || isArray) {
             String rawType = typeMirror.toString();
+            String boxedType = isPrimitive
+                    ? getBoxedType(typeUtils, typeMirror).toString()
+                    : rawType;
 
             if (isArray) {
                 rawType = rawType.replace("[]", "");
@@ -125,10 +126,11 @@ public final class LanguageModelUtils {
                         .map(type -> getTypeDetails(typeUtils, type))
                         .collect(Collectors.toList());
 
-                return new TypeDetails(rawType, isArray, isAbstract, isInterface, genericTypes);
+                return new TypeDetails(rawType, boxedType, isPrimitive, isArray, isAbstract, isInterface, genericTypes);
             }
 
-            return new TypeDetails(rawType, isArray, isAbstract, isInterface, Collections.emptyList());
+            List<TypeDetails> noGenerics = Collections.emptyList();
+            return new TypeDetails(rawType, boxedType, isPrimitive, isArray, isAbstract, isInterface, noGenerics);
         }
 
         return null;
@@ -138,19 +140,23 @@ public final class LanguageModelUtils {
     public static class TypeDetails {
 
         private final String typeName;
+        private final String boxedTypeName;
+        private final boolean isPrimitive;
         private final boolean isArray;
         private final boolean isAbstract;
         private final boolean isInterface;
         private final List<TypeDetails> generics;
 
-        private TypeDetails(String typeName, boolean isArray, boolean isAbstract, boolean isInterface,
-                            List<TypeDetails> generics) {
+        private TypeDetails(String typeName, String boxedTypeName, boolean isPrimitive, boolean isArray,
+                            boolean isAbstract, boolean isInterface, List<TypeDetails> generics) {
 
             if (typeName == null) {
                 throw new IllegalArgumentException("Type is missing");
             }
 
             this.typeName = typeName;
+            this.boxedTypeName = boxedTypeName;
+            this.isPrimitive = isPrimitive;
             this.isArray = isArray;
             this.isAbstract = isAbstract;
             this.isInterface = isInterface;
