@@ -2,6 +2,7 @@ package ice.bricks.lang.model;
 
 import com.sun.tools.javac.code.Type;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +93,12 @@ public final class LanguageModelUtils {
             // ? super T => Object
             if (wildcardType.isSuperBound()) {
                 String typeName = Object.class.getCanonicalName();
-                return new TypeDetails(typeName, typeName, false, isArray, false, false, Collections.emptyList());
+
+                return TypeDetails.builder()
+                        .typeName(typeName)
+                        .boxedTypeName(typeName)
+                        .isArray(isArray)
+                        .build();
             }
 
             // ? extends T => T
@@ -126,17 +132,35 @@ public final class LanguageModelUtils {
                         .map(type -> getTypeDetails(typeUtils, type))
                         .collect(Collectors.toList());
 
-                return new TypeDetails(rawType, boxedType, isPrimitive, isArray, isAbstract, isInterface, genericTypes);
+                return TypeDetails.builder()
+                        .typeName(rawType)
+                        .boxedTypeName(boxedType)
+                        .isPrimitive(isPrimitive)
+                        .isArray(isArray)
+                        .isAbstract(isAbstract)
+                        .isInterface(isInterface)
+                        .generics(genericTypes)
+                        .build();
             }
 
             List<TypeDetails> noGenerics = Collections.emptyList();
-            return new TypeDetails(rawType, boxedType, isPrimitive, isArray, isAbstract, isInterface, noGenerics);
+
+            return TypeDetails.builder()
+                    .typeName(rawType)
+                    .boxedTypeName(boxedType)
+                    .isPrimitive(isPrimitive)
+                    .isArray(isArray)
+                    .isAbstract(isAbstract)
+                    .isInterface(isInterface)
+                    .generics(noGenerics)
+                    .build();
         }
 
         return null;
     }
 
     @Getter
+    @Builder
     public static class TypeDetails {
 
         private final String typeName;
@@ -145,22 +169,22 @@ public final class LanguageModelUtils {
         private final boolean isArray;
         private final boolean isAbstract;
         private final boolean isInterface;
-        private final List<TypeDetails> generics;
 
-        private TypeDetails(String typeName, String boxedTypeName, boolean isPrimitive, boolean isArray,
-                            boolean isAbstract, boolean isInterface, List<TypeDetails> generics) {
+        @Builder.Default
+        private final List<TypeDetails> generics = Collections.emptyList();
 
-            if (typeName == null) {
-                throw new IllegalArgumentException("Type is missing");
+        @Override
+        public String toString() {
+            if (!this.generics.isEmpty()) {
+                String typeParameters = this.generics.stream()
+                        .map(TypeDetails::toString)
+                        .collect(Collectors.joining(", "));
+
+                return this.typeName + "<" + typeParameters + ">";
             }
-
-            this.typeName = typeName;
-            this.boxedTypeName = boxedTypeName;
-            this.isPrimitive = isPrimitive;
-            this.isArray = isArray;
-            this.isAbstract = isAbstract;
-            this.isInterface = isInterface;
-            this.generics = generics;
+            else {
+                return this.typeName;
+            }
         }
 
     }
