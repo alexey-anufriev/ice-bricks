@@ -187,6 +187,19 @@ public final class LanguageModelUtils {
             }
         }
 
+        public String toBoxedString() {
+            if (!this.generics.isEmpty()) {
+                String typeParameters = this.generics.stream()
+                        .map(TypeDetails::toBoxedString)
+                        .collect(Collectors.joining(", "));
+
+                return this.boxedTypeName + "<" + typeParameters + ">";
+            }
+            else {
+                return this.boxedTypeName;
+            }
+        }
+
     }
 
 }

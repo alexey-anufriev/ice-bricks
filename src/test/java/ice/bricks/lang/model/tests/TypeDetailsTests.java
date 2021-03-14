@@ -22,6 +22,15 @@ class TypeDetailsTests {
     }
 
     @Test
+    void shouldGenerateSimpleBoxedStringRepresentation() {
+        TypeDetails stringTypeDetails = TypeDetails.builder()
+                .boxedTypeName(Integer.class.getCanonicalName())
+                .build();
+
+        assertThat(stringTypeDetails.toBoxedString()).isEqualTo("java.lang.Integer");
+    }
+
+    @Test
     void shouldGenerateComplexStringRepresentation() {
         TypeDetails keyTypeDetails = TypeDetails.builder()
                 .typeName(String.class.getCanonicalName())
@@ -43,4 +52,28 @@ class TypeDetailsTests {
 
         assertThat(complexTypeDetails).hasToString("java.util.Map<java.lang.String, java.util.List<java.lang.Integer>>");
     }
+
+    @Test
+    void shouldGenerateComplexBoxedStringRepresentation() {
+        TypeDetails keyTypeDetails = TypeDetails.builder()
+                .boxedTypeName(String.class.getCanonicalName())
+                .build();
+
+        TypeDetails intTypeDetails = TypeDetails.builder()
+                .boxedTypeName(Integer.class.getCanonicalName())
+                .build();
+
+        TypeDetails valueTypeDetails = TypeDetails.builder()
+                .boxedTypeName(List.class.getCanonicalName())
+                .generics(Collections.singletonList(intTypeDetails))
+                .build();
+
+        TypeDetails complexTypeDetails = TypeDetails.builder()
+                .boxedTypeName(Map.class.getCanonicalName())
+                .generics(Arrays.asList(keyTypeDetails, valueTypeDetails))
+                .build();
+
+        assertThat(complexTypeDetails.toBoxedString()).isEqualTo("java.util.Map<java.lang.String, java.util.List<java.lang.Integer>>");
+    }
+
 }
