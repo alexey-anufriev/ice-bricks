@@ -127,6 +127,7 @@ public final class LanguageModelUtils {
 
             if (rawType.contains("<")) {
                 rawType = rawType.substring(0, rawType.indexOf("<"));
+                boxedType = boxedType.substring(0, boxedType.indexOf("<"));
 
                 List<TypeDetails> genericTypes = ((Type) typeMirror).allparams().stream()
                         .map(type -> getTypeDetails(typeUtils, type))
