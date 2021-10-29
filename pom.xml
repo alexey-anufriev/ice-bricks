@@ -8,7 +8,7 @@
     <artifactId>ice-bricks-root</artifactId>
     <version>0.14.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>${artifactId}</name>
+    <name>ice-bricks-root</name>
 
     <modules>
         <module>ice-bricks</module>

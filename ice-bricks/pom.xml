@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ice-bricks</artifactId>
-    <name>${artifactId}</name>
+    <name>ice-bricks</name>
 
     <dependencies>
         <dependency>
