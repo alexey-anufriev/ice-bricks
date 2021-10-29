@@ -61,6 +61,14 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <configuration>
+                                    <additionalOptions>
+                                        <option>--add-exports</option>
+                                        <option>jdk.compiler/com.sun.tools.javac.code=ice.bricks</option>
+                                        <option>--add-exports</option>
+                                        <option>jdk.compiler/com.sun.tools.javac.util=ice.bricks</option>
+                                    </additionalOptions>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
