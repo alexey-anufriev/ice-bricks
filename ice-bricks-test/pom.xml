@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>ice-bricks-test</artifactId>
+    <name>${artifactId}</name>
 
     <dependencies>
         <dependency>
