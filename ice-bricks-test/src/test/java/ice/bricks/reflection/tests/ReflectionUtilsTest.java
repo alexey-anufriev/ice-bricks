@@ -5,6 +5,7 @@ import ice.bricks.reflection.InstanceCreationException;
 import ice.bricks.reflection.MethodCallException;
 import ice.bricks.reflection.ReflectionUtils;
 import ice.bricks.reflection.tests.fixtures.TestPojo;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -114,9 +115,10 @@ class ReflectionUtilsTest {
 
     @Test
     void shouldCallNonAccessibleSetterMethod() {
-        List<String> testList = Arrays.asList("A", "B", "C");
-        assertThat(ReflectionUtils.<Boolean>invokeMethod(
-                testList, "contains", new Class<?>[] {String.class}, new Object[]{"B"})).isTrue();
+        List<String> testList = Lists.newArrayList("A", "B", "C");
+        ReflectionUtils.<Void>invokeMethod(
+                testList, "removeRange", new Class<?>[] {int.class, int.class}, new Object[]{0, 1});
+        assertThat(testList).containsExactly("B", "C");
     }
 
     @Test

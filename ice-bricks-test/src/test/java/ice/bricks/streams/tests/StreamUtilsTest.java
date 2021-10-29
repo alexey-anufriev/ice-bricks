@@ -1,5 +1,6 @@
-package ice.bricks.streams;
+package ice.bricks.streams.tests;
 
+import ice.bricks.streams.StreamUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

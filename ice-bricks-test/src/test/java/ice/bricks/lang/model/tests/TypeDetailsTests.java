@@ -1,6 +1,6 @@
 package ice.bricks.lang.model.tests;
 
-import ice.bricks.lang.model.LanguageModelUtils.TypeDetails;
+import ice.bricks.lang.model.TypeDetails;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
