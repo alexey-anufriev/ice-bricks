@@ -1,4 +1,4 @@
-name: Deploy Master Branch
+name: Deploy Release
 
 on: workflow_dispatch
 
