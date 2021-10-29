@@ -52,7 +52,7 @@ jobs:
         git add .
         git commit -m "release: create v${{ env.RELEASE_VERSION }}"
 
-    - name: Run Tests
+    - name: Prepare Artifact
       run: mvn -B clean verify -P publish --file pom.xml
 
     - name: Publish to Maven Central

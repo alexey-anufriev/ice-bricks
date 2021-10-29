@@ -22,5 +22,5 @@ jobs:
         distribution: adopt
         cache: maven
 
-    - name: Run Maven
+    - name: Run Tests
       run: mvn -B clean verify --file pom.xml
